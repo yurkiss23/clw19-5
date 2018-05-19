@@ -1,0 +1,23 @@
+net="10.7.180."
+data="state.ping"
+
+[ -s $data ] || for(( i=0; i<255; i++)) ; do echo 2 ;  done >> $data
+
+prev=( $( cat $data) )
+
+
+for i in {201..205}
+do
+  ip="$net$i"
+  ping -ci $ip &>>/dev/null
+  result=$?
+
+  if [ $result -ne ${prev[$i]} ]
+    then
+      echo $ip $result
+      prev[$i]=$result
+    fi
+done
+
+echo ${prev[@]} > $data
+
